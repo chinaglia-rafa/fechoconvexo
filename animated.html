@@ -41,6 +41,11 @@
 	var isPlaying = 1;
 
 	function renderLine(linha) {
+		if (linha.valida == 1) {
+			ctx.strokeStyle = '#00f'; 
+		} else { 
+			ctx.strokeStyle = '#333';
+		}
 		ctx.beginPath();
 		ctx.moveTo(linha.x1*escala, linha.y1*escala);
 		ctx.lineTo(linha.x2*escala, linha.y2*escala);
