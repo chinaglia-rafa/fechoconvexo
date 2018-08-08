@@ -1,0 +1,87 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Renderizar Constelação</title>
+</head>
+<style>
+	body {
+		background: #000;
+		color: white;
+	}
+	#canvas {
+		padding: 20px;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		border-radius: 4px;
+	}
+
+	button {
+		border: none;
+		background: #f00;
+		border-radius: 6px;
+		padding: 10px;
+		color: white;
+		font-weight: bold;
+	}
+</style>
+<body>
+	<button id="btn" value="1">| |</button>
+	<canvas id="canvas" width="500" height="500"></canvas>
+</body>
+<script>
+	const escala = 1;
+	var isPlaying = 1;
+	function reqListener () {
+  		console.log(JSON.parse(this.responseText));
+  		const json = JSON.parse(this.responseText);
+  		var canvas = document.querySelector("#canvas");
+  		var ctx = canvas.getContext('2d');
+		ctx.fillStyle = '#212121';
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		// ctx.lineTo(100,100);
+		json.linhas.forEach(function(linha) {
+			if (linha.valida == 1) ctx.strokeStyle = '#00f'; else ctx.strokeStyle = '#333';
+			ctx.beginPath();
+			ctx.moveTo(linha.x1*escala, linha.y1*escala);
+			ctx.lineTo(linha.x2*escala, linha.y2*escala);
+			ctx.stroke();
+			// ctx.fillRect(linha.x*escala,linha.y*escala,3,3);
+		});
+		ctx.fillStyle = '#f00';
+		ctx.beginPath();
+		json.pontos.forEach(function(ponto) {
+			ctx.moveTo(0, 0);
+			ctx.fillRect(ponto.x*escala,ponto.y*escala,3,3);
+		});
+		// ctx.closePath();
+		// ctx.fill();
+	};
+
+	function updateJSON() {
+		if (isPlaying == 0) { return false;}
+		var oReq = new XMLHttpRequest();
+		oReq.onload = reqListener;
+		oReq.open("get", "polygon.json", true);
+		oReq.send();
+	}
+
+	window.onload = function(e) {
+		const t = setInterval(updateJSON, 1000);
+		updateJSON();
+
+		document.querySelector("#btn").addEventListener('click', function(e) {
+			if (isPlaying == 1) {
+				isPlaying = 0;
+				e.currentTarget.innerHTML = '>';
+			} else {
+				isPlaying = 1;
+				e.currentTarget.innerHTML = '| |';
+			}
+		});
+	}
+</script>
+</html>
